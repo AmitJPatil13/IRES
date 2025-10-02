@@ -3,157 +3,156 @@ import { PDFDocument } from 'pdf-lib';
 
 export class ServerPDFProcessor {
   
-  static async extractTextFromPDF(buffer: Buffer): Promise<string> {
+  static async extractTextFromPDF(buffer: Buffer): Promise<{ text: string; isRealContent: boolean }> {
     try {
-      console.log('🚀 Starting fast PDF text extraction...');
+      console.log('🚀 ATTEMPTING PDF TEXT EXTRACTION');
       
-      // First try to extract text directly from PDF
-      const digitalText = await this.extractDigitalText(buffer);
-      if (digitalText && digitalText.trim().length > 50) {
-        console.log('✅ Digital PDF text extracted in <1s');
-        return digitalText;
+      // Quick check if PDF is valid
+      const pdfDoc = await PDFDocument.load(buffer);
+      const pageCount = pdfDoc.getPageCount();
+      console.log(`📄 Valid PDF with ${pageCount} pages`);
+      
+      // Try simple text extraction
+      const pdfString = buffer.toString('latin1');
+      const textMatches = pdfString.match(/\(([^)]*)\)/g);
+      
+      if (textMatches && textMatches.length > 10) {
+        // Look for readable text pieces
+        const readableTexts = textMatches
+          .map(match => match.slice(1, -1))
+          .filter(text => {
+            // Only keep text that looks like actual resume content
+            return text.length > 2 && 
+                   text.length < 100 && // Not too long
+                   /^[a-zA-Z0-9\s@.,!?\-()]+$/.test(text) && // Only normal characters
+                   !text.includes('D:') &&
+                   !text.includes('pdfTeX') &&
+                   !text.includes('endstream');
+          })
+          .slice(0, 50); // Take first 50 pieces only
+        
+        console.log(`📄 Found ${readableTexts.length} readable text pieces`);
+        console.log(`📄 Sample pieces: ${readableTexts.slice(0, 5).join(' | ')}`);
+        
+        if (readableTexts.length > 5) {
+          const cleanText = readableTexts.join(' ').replace(/\s+/g, ' ').trim();
+          console.log(`📄 Combined text: ${cleanText.length} chars`);
+          
+          // Check if this looks like actual resume content
+          const hasResumeKeywords = /\b(experience|education|skills|email|phone|university|college|engineer|manager|developer)\b/i.test(cleanText);
+          
+          if (hasResumeKeywords && cleanText.length > 50) {
+            console.log(`✅ Found readable resume content!`);
+            return { text: cleanText, isRealContent: true };
+          }
+        }
       }
 
-      // If digital extraction fails, return a sample for demo
-      console.log('📄 Using sample text for demo purposes');
-      return this.generateSampleResumeText();
+      // If extraction fails or produces garbage, return a helpful template
+      console.log('❌ PDF text extraction failed or produced unreadable content');
+      console.log('📄 Providing clean template for manual entry');
+      
+      return { 
+        text: `*** THIS IS DUMMY DATA FOR DEMONSTRATION ***
+You can create your own resume using this format and structure.
+
+SARAH MARTINEZ
+Software Engineer
+
+Email: sarah.martinez@email.com
+Phone: (555) 123-4567
+Location: San Francisco, CA
+LinkedIn: linkedin.com/in/sarahmartinez
+
+PROFESSIONAL SUMMARY
+Results-driven Software Engineer with 5+ years of experience in full-stack development. 
+Expertise in JavaScript, React, Node.js, and cloud technologies. 
+Proven track record of delivering scalable web applications and leading cross-functional teams.
+
+WORK EXPERIENCE
+
+Senior Software Engineer
+TechCorp Solutions
+March 2021 - Present
+• Led development of customer portal serving 50,000+ users
+• Implemented microservices architecture reducing system latency by 40%
+• Mentored 3 junior developers and conducted code reviews
+• Collaborated with product team to define technical requirements
+
+Software Engineer
+StartupXYZ
+June 2019 - February 2021
+• Developed responsive web applications using React and Node.js
+• Built RESTful APIs handling 25,000+ requests per day
+• Optimized database queries improving response time by 60%
+• Participated in agile development process and sprint planning
+
+Junior Developer
+WebDev Inc
+August 2018 - May 2019
+• Created interactive user interfaces using HTML, CSS, and JavaScript
+• Fixed bugs and maintained legacy codebase
+• Learned modern frameworks and development best practices
+• Assisted senior developers with complex feature implementations
+
+EDUCATION
+
+Bachelor of Science in Computer Science
+University of California, Berkeley
+Graduated: May 2018
+GPA: 3.8/4.0
+
+TECHNICAL SKILLS
+
+Programming Languages: JavaScript, TypeScript, Python, Java
+Frontend Technologies: React, Vue.js, HTML5, CSS3, Bootstrap
+Backend Technologies: Node.js, Express.js, Django, Spring Boot
+Databases: PostgreSQL, MongoDB, MySQL, Redis
+Cloud & DevOps: AWS, Docker, Kubernetes, Jenkins, Git
+Tools & Frameworks: Jest, Webpack, Babel, Postman
+
+PROJECTS
+
+E-Commerce Platform
+• Built full-stack online marketplace using React and Node.js
+• Implemented secure payment processing with Stripe integration
+• Deployed on AWS with auto-scaling and load balancing
+• Achieved 99.9% uptime with comprehensive monitoring
+
+Task Management App
+• Developed collaborative project management tool
+• Used React for frontend and Express.js for backend
+• Implemented real-time updates using WebSocket connections
+• Integrated with third-party APIs for calendar synchronization
+
+CERTIFICATIONS
+
+AWS Certified Solutions Architect - Associate (2023)
+Google Cloud Professional Developer (2022)
+Certified Scrum Master (2021)
+
+*** END OF DUMMY DATA ***
+Use this format to create your own professional resume.`,
+        isRealContent: false 
+      };
       
     } catch (error) {
       console.error('PDF processing error:', error);
-      throw new Error('Failed to process PDF file');
-    }
-  }
+      return { 
+        text: `PDF PROCESSING ERROR
 
-  private static async extractDigitalText(buffer: Buffer): Promise<string | null> {
-    try {
-      // Load PDF to validate it's a proper PDF
-      const pdfDoc = await PDFDocument.load(buffer);
-      const pageCount = pdfDoc.getPageCount();
-      
-      if (pageCount === 0) {
-        throw new Error('Empty PDF');
-      }
+Your PDF file could not be processed. Please use this template:
 
-      // For production, you would use a library like pdf-parse here
-      // For now, we'll simulate fast extraction with sample data
-      return this.generateSampleResumeText();
-      
-    } catch (error) {
-      console.log('Digital extraction failed:', error);
-      return null;
-    }
-  }
+FULL NAME: [Your Name]
+EMAIL: [your.email@example.com]
+PHONE: [your phone number]
+EXPERIENCE: [Your work experience]
+EDUCATION: [Your education]
+SKILLS: [Your skills]
 
-  private static generateSampleResumeText(): string {
-    return `JOHN SMITH
-Software Engineer
-Email: john.smith@email.com | Phone: (555) 123-4567
-LinkedIn: linkedin.com/in/johnsmith | Location: San Francisco, CA
-
-PROFESSIONAL SUMMARY
-Results-driven Software Engineer with 5+ years of experience developing scalable web applications and leading cross-functional teams. Expertise in JavaScript, React, Node.js, and cloud technologies. Proven track record of improving system performance by 40% and delivering projects on time.
-
-TECHNICAL SKILLS
-• Programming Languages: JavaScript, TypeScript, Python, Java
-• Frontend: React, Vue.js, HTML5, CSS3, Tailwind CSS
-• Backend: Node.js, Express.js, REST APIs, GraphQL
-• Databases: MongoDB, PostgreSQL, Redis
-• Cloud & DevOps: AWS, Docker, Kubernetes, CI/CD
-• Tools: Git, Jest, Webpack, Agile/Scrum
-
-PROFESSIONAL EXPERIENCE
-
-Senior Software Engineer | TechCorp Inc. | Jan 2021 - Present
-• Led development of customer-facing web application serving 100K+ users
-• Implemented microservices architecture reducing system latency by 35%
-• Mentored 3 junior developers and conducted code reviews
-• Collaborated with product managers to define technical requirements
-• Achieved 99.9% uptime through robust error handling and monitoring
-
-Software Engineer | StartupXYZ | Jun 2019 - Dec 2020
-• Developed responsive web applications using React and Node.js
-• Built RESTful APIs handling 10K+ requests per day
-• Optimized database queries improving response time by 50%
-• Participated in agile development process and sprint planning
-• Contributed to open-source projects and technical documentation
-
-Junior Developer | WebSolutions LLC | Aug 2018 - May 2019
-• Created interactive user interfaces using modern JavaScript frameworks
-• Assisted in debugging and testing web applications
-• Learned best practices for version control and collaborative development
-• Supported senior developers in project delivery and maintenance
-
-EDUCATION
-Bachelor of Science in Computer Science
-University of California, Berkeley | Graduated: May 2018
-GPA: 3.7/4.0 | Relevant Coursework: Data Structures, Algorithms, Software Engineering
-
-PROJECTS
-E-Commerce Platform (2023)
-• Built full-stack e-commerce application with React and Node.js
-• Integrated payment processing and inventory management
-• Deployed on AWS with auto-scaling capabilities
-
-Task Management App (2022)
-• Developed collaborative task management tool
-• Implemented real-time updates using WebSocket
-• Used MongoDB for data persistence
-
-CERTIFICATIONS
-• AWS Certified Solutions Architect - Associate (2023)
-• Google Cloud Professional Developer (2022)
-• Certified Scrum Master (CSM) (2021)
-
-ACHIEVEMENTS
-• Employee of the Month - TechCorp Inc. (March 2023)
-• Hackathon Winner - Best Technical Innovation (2022)
-• Open Source Contributor - 500+ GitHub contributions
-• Technical Blog Writer - 10K+ monthly readers`;
-  }
-
-  static async generatePDF(content: string, fileName: string): Promise<Buffer> {
-    try {
-      console.log('📄 Generating enhanced PDF...');
-      
-      const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage([612, 792]); // Standard letter size
-      
-      // Split content into lines and add to PDF with better formatting
-      const lines = content.split('\n');
-      const fontSize = 11;
-      const lineHeight = fontSize * 1.4;
-      let yPosition = 750;
-      let currentPage = page;
-      
-      for (const line of lines) {
-        if (yPosition < 50) {
-          // Add new page if needed
-          currentPage = pdfDoc.addPage([612, 792]);
-          yPosition = 750;
-        }
-        
-        // Handle different text styles
-        let textSize = fontSize;
-        if (line.trim().toUpperCase() === line.trim() && line.trim().length < 50) {
-          textSize = fontSize + 2; // Headers
-        }
-        
-        currentPage.drawText(line.substring(0, 80), { // Limit line length
-          x: 50,
-          y: yPosition,
-          size: textSize,
-        });
-        
-        yPosition -= lineHeight;
-      }
-      
-      const pdfBytes = await pdfDoc.save();
-      console.log('✅ PDF generated successfully');
-      
-      return Buffer.from(pdfBytes);
-    } catch (error) {
-      console.error('PDF generation error:', error);
-      throw new Error('Failed to generate PDF');
+Error details: ${error}`,
+        isRealContent: false 
+      };
     }
   }
 }

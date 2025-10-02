@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     console.log(`✅ PDF generated successfully in ${processingTime}ms`);
     
     // Return PDF as downloadable file
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

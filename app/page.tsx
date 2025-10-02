@@ -9,11 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   Brain, 
-  FileText, 
   TrendingUp, 
   Zap, 
   Shield, 
-  Clock,
   ArrowRight,
   RefreshCw
 } from 'lucide-react';
@@ -321,7 +319,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Get detailed insights into your resume's ATS performance with before and after scoring.
+                    Get detailed insights into your resume&apos;s ATS performance with before and after scoring.
                   </p>
                 </CardContent>
               </Card>
@@ -350,7 +348,7 @@ export default function HomePage() {
                 Resume Analysis Complete
               </h2>
               <p className="text-lg text-gray-600">
-                Here's how your resume performs with ATS systems
+                Here&apos;s how your resume performs with ATS systems
               </p>
             </div>
 

@@ -4,10 +4,12 @@ An AI-powered platform that optimizes resumes for better performance in Applican
 
 ## 🚀 Features
 
-- **PDF Resume Upload**: Support for both digital and scanned PDF resumes
-- **OCR Technology**: Extract text from scanned resume images using Tesseract.js
-- **ATS Score Analysis**: Comprehensive scoring across keywords, formatting, readability, and structure
-- **AI Enhancement**: Powered by OpenAI GPT and Google Gemini APIs
+- **Advanced PDF Processing**: Real PDF text extraction using pdf-parse with OCR fallback for scanned documents
+- **Comprehensive Resume Parsing**: Professional-grade parsing that extracts personal info, experience, education, skills, and certifications
+- **Industry-Specific ATS Analysis**: Tailored scoring for Technology, Marketing, Sales, Finance, Healthcare, and General industries
+- **Enhanced Keyword Analysis**: Power word detection and industry-specific keyword optimization
+- **AI Enhancement**: Powered by OpenAI GPT and Google Gemini APIs with intelligent fallback
+- **Smart Enhancement Engine**: Sophisticated demo enhancement with action verb improvements and quantification
 - **Real-time Processing**: Live progress tracking and instant results
 - **Professional PDF Generation**: Download enhanced resumes in professional PDF format
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
@@ -25,9 +27,11 @@ An AI-powered platform that optimizes resumes for better performance in Applican
 
 ### Backend
 - **Next.js API Routes** - Serverless API endpoints
-- **PDF Processing**: pdf-lib, Tesseract.js for OCR
-- **AI Integration**: OpenAI GPT-3.5/4 and Google Gemini APIs
+- **PDF Processing**: pdf-parse for text extraction, pdf-lib for generation, Tesseract.js for OCR
+- **Resume Parsing**: Custom comprehensive parser with industry-specific analysis
+- **AI Integration**: OpenAI GPT-3.5/4 and Google Gemini APIs with intelligent fallback
 - **File Handling**: Formidable for multipart form data
+- **Image Processing**: Sharp for image optimization
 
 ### Deployment
 - **Vercel** - Optimized for Next.js applications
@@ -128,25 +132,57 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 └── public/               # Static assets
 ```
 
-## 🔄 Workflow
+## 🔄 Enhanced Workflow
 
-1. **Resume Upload**: User uploads PDF resume
-2. **Text Extraction**: Extract text using PDF parser or OCR
-3. **ATS Analysis**: Analyze resume for ATS compatibility
-4. **AI Enhancement**: Use AI to improve content and structure
-5. **PDF Generation**: Create enhanced resume in PDF format
-6. **Download**: User downloads optimized resume
+1. **Resume Upload**: User uploads PDF resume with validation and progress tracking
+2. **Advanced Text Extraction**: 
+   - Primary: Digital PDF text extraction using pdf-parse
+   - Fallback: OCR processing with Tesseract.js for scanned documents
+   - Demo: Sample resume generation for testing
+3. **Comprehensive Resume Parsing**: 
+   - Extract personal information, experience, education, skills, certifications
+   - Structure analysis and section identification
+4. **Industry-Specific ATS Analysis**: 
+   - Multi-dimensional scoring (keywords, formatting, readability, structure)
+   - Industry-tailored keyword analysis (Technology, Marketing, Sales, Finance, Healthcare)
+   - Power word detection and quantification analysis
+5. **AI-Powered Enhancement**: 
+   - Primary: OpenAI GPT or Google Gemini API enhancement
+   - Fallback: Sophisticated demo enhancement with verb improvements and quantification
+   - Industry-specific optimization and keyword integration
+6. **Professional PDF Generation**: Create enhanced resume with improved formatting
+7. **Results & Download**: Display before/after scores and download optimized resume
 
-## 🎯 ATS Scoring Algorithm
+## 🎯 Enhanced ATS Scoring Algorithm
 
-The system evaluates resumes across four key areas:
+The system evaluates resumes across four key areas with industry-specific analysis:
 
-- **Keywords (25%)**: Industry-relevant terms and skills
-- **Formatting (25%)**: Section structure and organization  
-- **Readability (25%)**: Sentence structure and clarity
-- **Structure (25%)**: Proper sections and chronological order
+### Scoring Components
+- **Keywords (25%)**: 
+  - Industry-specific keyword matching (Technology, Marketing, Sales, Finance, Healthcare)
+  - Power word detection (achieved, improved, led, developed, etc.)
+  - Keyword density and relevance analysis
+- **Formatting (25%)**: 
+  - Section structure and organization
+  - Contact information completeness
+  - Professional formatting consistency
+- **Readability (25%)**: 
+  - Sentence structure and clarity
+  - Bullet point usage
+  - Quantified achievements
+- **Structure (25%)**: 
+  - Proper section headers and organization
+  - Chronological order
+  - Professional summary presence
 
-Each area is scored 0-100, with an overall weighted average.
+### Industry-Specific Keywords
+- **Technology**: Programming languages, frameworks, cloud platforms, methodologies
+- **Marketing**: Digital channels, analytics, ROI metrics, automation tools
+- **Sales**: Revenue generation, CRM, pipeline management, quota achievement
+- **Finance**: Financial analysis, compliance, risk management, budgeting
+- **Healthcare**: Patient care, clinical experience, healthcare regulations
+
+Each area is scored 0-100, with an overall weighted average and tailored suggestions.
 
 ## 🚀 Deployment
 

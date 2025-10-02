@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { RadialBarChart, RadialBar, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ATSScore } from '@/types';
 import { CheckCircle, AlertCircle, XCircle, TrendingUp } from 'lucide-react';

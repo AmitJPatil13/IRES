@@ -72,7 +72,7 @@ export function ResumeEnhancementForm({ onSubmit, isProcessing = false }: Resume
               disabled={isProcessing}
             />
             <p className="text-xs text-gray-500">
-              Specify the role you're targeting to optimize keyword relevance
+              Specify the role you&apos;re targeting to optimize keyword relevance
             </p>
           </div>
 
